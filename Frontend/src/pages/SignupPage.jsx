@@ -36,7 +36,7 @@ const SignupPage = () => {
 
       // ✅ FIXED ENDPOINT
       const { data } = await api.post(
-        "/api/auth/signup",
+        "/auth/signup",
         formData
       );
 
