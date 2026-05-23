@@ -8,9 +8,7 @@ import api from "../services/api";
 import { AuthContext } from "../context/AuthContext";
 
 const SignupPage = () => {
-
   const navigate = useNavigate();
-
   const { login } = useContext(AuthContext);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -34,27 +32,24 @@ const SignupPage = () => {
     e.preventDefault();
 
     try {
-
       setLoading(true);
 
+      // ✅ FIXED ENDPOINT
       const { data } = await api.post(
-        "/auth/signup",
+        "/api/auth/signup",
         formData
       );
 
       login(data);
 
-      toast.success("Account created");
+      toast.success("Account created successfully");
 
       navigate("/dashboard");
 
     } catch (error) {
-
       toast.error(
-        error.response?.data?.message ||
-        "Something went wrong"
+        error.response?.data?.message || "Something went wrong"
       );
-
     } finally {
       setLoading(false);
     }
@@ -65,17 +60,11 @@ const SignupPage = () => {
       title="Create Account"
       subtitle="Start chatting with powerful AI"
     >
+      <form onSubmit={handleSubmit} className="space-y-5">
 
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-5"
-      >
-
+        {/* NAME */}
         <div>
-          <label className="text-sm text-slate-300">
-            Full Name
-          </label>
-
+          <label className="text-sm text-slate-300">Full Name</label>
           <input
             type="text"
             name="name"
@@ -83,14 +72,13 @@ const SignupPage = () => {
             value={formData.name}
             onChange={handleChange}
             className="w-full mt-2 bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-cyan-400 transition"
+            required
           />
         </div>
 
+        {/* EMAIL */}
         <div>
-          <label className="text-sm text-slate-300">
-            Email
-          </label>
-
+          <label className="text-sm text-slate-300">Email</label>
           <input
             type="email"
             name="email"
@@ -98,16 +86,15 @@ const SignupPage = () => {
             value={formData.email}
             onChange={handleChange}
             className="w-full mt-2 bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-cyan-400 transition"
+            required
           />
         </div>
 
+        {/* PASSWORD */}
         <div>
-          <label className="text-sm text-slate-300">
-            Password
-          </label>
+          <label className="text-sm text-slate-300">Password</label>
 
           <div className="relative mt-2">
-
             <input
               type={showPassword ? "text" : "password"}
               name="password"
@@ -115,6 +102,7 @@ const SignupPage = () => {
               value={formData.password}
               onChange={handleChange}
               className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-cyan-400 transition"
+              required
             />
 
             <button
@@ -122,35 +110,27 @@ const SignupPage = () => {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-4 top-3 text-slate-400"
             >
-              {showPassword
-                ? <EyeOff size={20} />
-                : <Eye size={20} />
-              }
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
-
           </div>
         </div>
 
+        {/* BUTTON */}
         <button
           disabled={loading}
           className="w-full bg-cyan-500 hover:bg-cyan-400 transition py-3 rounded-xl font-semibold"
         >
           {loading ? "Creating..." : "Create Account"}
         </button>
-
       </form>
 
+      {/* LOGIN LINK */}
       <p className="text-center text-slate-400 mt-6">
         Already have an account?{" "}
-
-        <Link
-          to="/login"
-          className="text-cyan-400 hover:text-cyan-300"
-        >
+        <Link to="/login" className="text-cyan-400 hover:text-cyan-300">
           Login
         </Link>
       </p>
-
     </AuthLayout>
   );
 };
