@@ -35,7 +35,7 @@ const LoginPage = () => {
 
       // ✅ FIXED ENDPOINT (IMPORTANT)
       const { data } = await api.post(
-        "/api/auth/login",
+        "/auth/login",
         formData
       );
 
