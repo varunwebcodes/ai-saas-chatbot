@@ -11,18 +11,26 @@ dotenv.config();
 
 const app = express();
 
-// ---------- Middleware ----------
+// ---------- Allowed Origins ----------
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://ai-saas-chatbot-zeta.vercel.app",
+  "https://ai-saas-chatbot-3t44stgb7-varun-saas-projects.vercel.app",
+];
+
+// ---------- CORS Middleware ----------
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://ai-saas-chatbot-3t44stgb7-varun-saas-projects.vercel.app",
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   })
 );
 
+// Handle preflight requests
+app.options("*", cors());
+
+// ---------- Core Middleware ----------
 app.use(express.json());
 app.use(cookieParser());
 
