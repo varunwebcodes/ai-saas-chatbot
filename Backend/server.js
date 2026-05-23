@@ -28,7 +28,7 @@ app.use(
 );
 
 // Handle preflight requests
-app.options("*", cors());
+app.options("/", cors());
 
 // ---------- Core Middleware ----------
 app.use(express.json());
