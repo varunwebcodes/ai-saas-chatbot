@@ -11,34 +11,55 @@ dotenv.config();
 
 const app = express();
 
-// ---------- Allowed Origins ----------
+// -------------------- CORS (MUST BE FIRST) --------------------
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://ai-saas-chatbot-zeta.vercel.app",
-  "https://ai-saas-chatbot-3t44stgb7-varun-saas-projects.vercel.app",
+  "https://ai-saas-chatbot-9t05o8g9m-varun-saas-projects.vercel.app",
 ];
 
-// ---------- CORS Middleware ----------
 app.use(
   cors({
-    origin: allowedOrigins,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-// Handle preflight requests
-app.options("/", cors());
+// -------------------- HANDLE PREFLIGHT --------------------
+app.options("*", cors());
 
-// ---------- Core Middleware ----------
+// -------------------- EXTRA SAFETY MIDDLEWARE --------------------
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", req.headers.origin);
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
+
+// -------------------- CORE MIDDLEWARE --------------------
 app.use(express.json());
 app.use(cookieParser());
 
-// ---------- Routes ----------
+// -------------------- ROUTES --------------------
 app.use("/api/chat", chatRoutes);
 app.use("/api/auth", authRoutes);
 
-// ---------- DB ----------
+// -------------------- DATABASE --------------------
 const connectDB = async () => {
   try {
     if (!process.env.MONGO_URI) {
@@ -53,7 +74,7 @@ const connectDB = async () => {
   }
 };
 
-// ---------- Start Server ----------
+// -------------------- START SERVER --------------------
 const PORT = process.env.PORT || 5000;
 
 const start = async () => {
